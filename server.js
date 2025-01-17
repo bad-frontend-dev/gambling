@@ -2,11 +2,12 @@ const express = require("express");
 const session = require("express-session");
 const { MongoClient } = require("mongodb");
 const path = require("path");
+require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
-const DB_USERNAME = "admin";
-const DB_PASSWORD = "verygoodpassword";
-//should probably move env vars to .env file but im lazy
+const DB_USERNAME = process.env.MONGO_USERNAME;
+const DB_PASSWORD = process.env.MONGO_PASSWORD;
+
 const userRegex = /[^A-Za-z0-9_-]/gm;
 
 const url = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@localhost:27017/`;

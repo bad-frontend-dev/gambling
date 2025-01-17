@@ -3,9 +3,9 @@ const session = require("express-session");
 const { MongoClient } = require("mongodb");
 const path = require("path");
 
-const PORT = process.env.PORT || 3000
-const DB_USERNAME = "admin"
-const DB_PASSWORD = "verygoodpassword"
+const PORT = process.env.PORT || 3000;
+const DB_USERNAME = "admin";
+const DB_PASSWORD = "verygoodpassword";
 //should probably move env vars to .env file but im lazy
 const userRegex = /[^A-Za-z0-9_-]/gm;
 
@@ -30,9 +30,9 @@ app.use(
 app.get("/reset", (req, res) => {
     req.session.money = 100;
     res.send({
-	money: req.session.money
+        money: req.session.money,
     });
-})
+});
 
 app.get("/gamble", (req, res) => {
     const bet = parseInt(req.query.bet) || 1;
@@ -123,3 +123,5 @@ async function getLeaderboard() {
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
+
+//hi

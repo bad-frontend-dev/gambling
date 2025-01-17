@@ -123,5 +123,3 @@ async function getLeaderboard() {
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
-
-//hi

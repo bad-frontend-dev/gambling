@@ -19,6 +19,7 @@ const limiter = rateLimit({
     limit: 20,
     standardHeaders: "draft-8",
     legacyHeaders: false,
+    message: "stop sending so many requests!!!11",
 });
 
 const app = express();

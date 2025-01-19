@@ -1,5 +1,6 @@
 const express = require("express");
 const session = require("express-session");
+const { rateLimit } = require("express-rate-limit");
 const { MongoClient } = require("mongodb");
 const path = require("path");
 require("dotenv").config();
@@ -12,6 +13,13 @@ const userRegex = /[^A-Za-z0-9_-]/gm;
 
 const url = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@localhost:27017/`;
 const client = new MongoClient(url);
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+});
 
 const app = express();
 
@@ -28,6 +36,9 @@ app.use(
         saveUninitialized: true,
     })
 );
+
+app.use("/reset", limiter);
+app.use("/submit", limiter);
 
 app.get("/reset", (req, res) => {
     req.session.money = 100;

@@ -41,7 +41,6 @@ app.use(
     })
 );
 
-app.use("/reset", limiter);
 app.use("/submit", limiter);
 
 app.get("/reset", (req, res) => {

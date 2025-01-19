@@ -85,9 +85,7 @@ function gamble() {
         .then(({ win, money }) => {
             if (money || money === 0) {
                 updateMoney(money);
-                showMessage(
-                    `you ${win ? "win" : "lost"} $${formatMoney(money)}`
-                );
+                showMessage(`you ${win ? "win" : "lost"} $${formatMoney(bet)}`);
                 gambling = false;
             }
         })

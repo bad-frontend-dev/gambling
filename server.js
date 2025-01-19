@@ -8,7 +8,7 @@ require("dotenv").config();
 const PORT = process.env.PORT || 3000;
 const DB_USERNAME = process.env.MONGO_USERNAME;
 const DB_PASSWORD = process.env.MONGO_PASSWORD;
-const MONGO_PORT = process.env.MONGO_PORT || 27071;
+const MONGO_PORT = process.env.MONGO_PORT || 27017;
 const SECRET = process.env.SECRET;
 
 const userRegex = /[^A-Za-z0-9_-]/gm;

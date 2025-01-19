@@ -21,7 +21,8 @@ app.use(
     session({
         secret: "meow",
         cookie: {
-            secure: false,
+            secure: true,
+            sameSite: true,
         },
         resave: false,
         saveUninitialized: true,

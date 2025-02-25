@@ -91,7 +91,8 @@ app.get("/submit", (req, res) => {
             message: `successfully cashed out $${money} (reload to restart)`,
         });
     } catch (error) {
-        res.sendStatus(400);
+        console.log(error);
+        res.sendStatus(500);
     }
 });
 
@@ -103,7 +104,8 @@ app.get("/leaderboard", (req, res) => {
 
         res.json(leaderboard);
     } catch (error) {
-        res.status(400);
+        console.log(error);
+        res.status(500);
     }
 });
 

@@ -1,20 +1,16 @@
-const express = require("express");
-const session = require("express-session");
-const { rateLimit } = require("express-rate-limit");
-const { MongoClient } = require("mongodb");
-const path = require("path");
-require("dotenv").config();
+import express from "express";
+import session from "express-session";
+import { rateLimit } from "express-rate-limit";
+import path from "path";
+import fs from "fs";
+import "dotenv/config";
+
+const __dirname = process.cwd();
 
 const PORT = process.env.PORT || 3000;
-const DB_USERNAME = process.env.MONGO_USERNAME;
-const DB_PASSWORD = process.env.MONGO_PASSWORD;
-const MONGO_PORT = process.env.MONGO_PORT || 27017;
-const SECRET = process.env.SECRET;
+const SECRET = process.env.SECRET || "secret";
 
 const userRegex = /[^A-Za-z0-9_-]/gm;
-
-const url = `mongodb://${DB_USERNAME}:${DB_PASSWORD}@localhost:${MONGO_PORT}/`;
-const client = new MongoClient(url);
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -23,6 +19,10 @@ const limiter = rateLimit({
     legacyHeaders: false,
     message: "stop sending so many requests!!!11",
 });
+
+if (!fs.existsSync("leaderboard.json")) {
+    fs.writeFileSync("leaderboard.json", "[]");
+}
 
 const app = express();
 
@@ -37,7 +37,6 @@ app.use(
         },
         resave: false,
         saveUninitialized: true,
-        //TODO: add session store
     })
 );
 
@@ -82,58 +81,49 @@ app.get("/submit", (req, res) => {
         return;
     }
 
-    updateLeaderboard({
-        username: user,
-        money: money,
-    })
-        .then(() => {
-            req.session.money = 0;
-            res.send({
-                message: `successfully cashed out $${money} (reload to restart)`,
-            });
-        })
-        .catch(() => {
-            res.sendStatus(400);
+    try {
+        updateLeaderboard({
+            username: user,
+            money: money,
         });
+        req.session.money = 0;
+        res.send({
+            message: `successfully cashed out $${money} (reload to restart)`,
+        });
+    } catch (error) {
+        res.sendStatus(400);
+    }
 });
 
 app.get("/leaderboard", (req, res) => {
-    getLeaderboard().then((data) => {
-        res.send(data);
-    });
+    try {
+        const leaderboard = JSON.parse(
+            fs.readFileSync("leaderboard.json", "utf-8")
+        );
+
+        res.json(leaderboard);
+    } catch (error) {
+        res.status(400);
+    }
 });
 
-async function updateLeaderboard({ username, money }) {
-    await client.connect();
-    const db = client.db("gambling");
-    const leaderboard = db.collection("leaderboard");
-    leaderboard
-        .insertOne({
-            username: username,
-            money: money,
-        })
-        .then(() => {
-            console.log(`user "${username}" cashed out $${money}`);
-        })
-        .finally(() => {
-            client.close();
-        });
-}
+function updateLeaderboard({ username, money }) {
+    const leaderboard = JSON.parse(
+        fs.readFileSync("leaderboard.json", "utf-8")
+    );
 
-async function getLeaderboard() {
-    await client.connect();
-    const db = client.db("gambling");
-    const leaderboard = db.collection("leaderboard");
-    const results = await leaderboard
-        .find()
-        .project({ _id: false })
-        .sort({
-            money: -1,
-        })
-        .limit(10)
-        .toArray();
+    leaderboard.push({
+        username: username,
+        money: money,
+    });
 
-    return results;
+    leaderboard.sort((a, b) => b.money - a.money);
+
+    if (leaderboard.length > 10) {
+        leaderboard.pop();
+    }
+
+    fs.writeFileSync("leaderboard.json", JSON.stringify(leaderboard));
 }
 
 app.listen(PORT, () => {

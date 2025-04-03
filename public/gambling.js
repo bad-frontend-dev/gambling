@@ -21,6 +21,12 @@ window.addEventListener("load", async () => {
 
 document.getElementById("gamble").addEventListener("click", gamble);
 
+document.getElementById("all-in").addEventListener("click", (event) => {
+    if (!document.getElementById("all-in").checked) return;
+
+    document.getElementById("bet").value = theCollegeFund;
+})
+
 document.getElementById("bet").addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         gamble();
@@ -55,11 +61,10 @@ document.getElementById("cash-out").addEventListener("click", () => {
 });
 
 function gamble() {
-    if (document.getElementById("enable_all_in").checked) {
-        bet = theCollegeFund;
-    } else {
-        bet = parseInt(document.getElementById("bet").value);
-    }
+
+    
+    bet = parseInt(document.getElementById("bet").value);
+    
     if (!bet) {
         showMessage("invalid input :(");
         return;
@@ -91,6 +96,10 @@ function gamble() {
                 updateMoney(money);
                 showMessage(`you ${win ? "win" : "lost"} $${formatMoney(bet)}`);
                 gambling = false;
+
+		if (document.getElementById("all-in").checked) {
+		    document.getElementById("bet").value = theCollegeFund;
+		}
             }
         })
         .catch(() => {

@@ -130,7 +130,7 @@ function formatMoney(int) {
 function updateMoney(money) {
     theCollegeFund = money;
     document.getElementById("money").innerHTML = `you have $${formatMoney(
-        money,
+        money
     )}`;
 }
 

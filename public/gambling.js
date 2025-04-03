@@ -55,7 +55,11 @@ document.getElementById("cash-out").addEventListener("click", () => {
 });
 
 function gamble() {
-    const bet = parseInt(document.getElementById("bet").value);
+    if (document.getElementById("enable_all_in").checked) {
+        bet = theCollegeFund;
+    } else {
+        bet = parseInt(document.getElementById("bet").value);
+    }
     if (!bet) {
         showMessage("invalid input :(");
         return;
@@ -117,7 +121,7 @@ function formatMoney(int) {
 function updateMoney(money) {
     theCollegeFund = money;
     document.getElementById("money").innerHTML = `you have $${formatMoney(
-        money
+        money,
     )}`;
 }
 

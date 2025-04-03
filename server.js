@@ -37,7 +37,7 @@ app.use(
         },
         resave: false,
         saveUninitialized: true,
-    })
+    }),
 );
 
 app.use("/submit", limiter);
@@ -99,7 +99,7 @@ app.get("/submit", (req, res) => {
 app.get("/leaderboard", (req, res) => {
     try {
         const leaderboard = JSON.parse(
-            fs.readFileSync("leaderboard.json", "utf-8")
+            fs.readFileSync("leaderboard.json", "utf-8"),
         );
 
         res.json(leaderboard);
@@ -111,7 +111,7 @@ app.get("/leaderboard", (req, res) => {
 
 function updateLeaderboard({ username, money }) {
     const leaderboard = JSON.parse(
-        fs.readFileSync("leaderboard.json", "utf-8")
+        fs.readFileSync("leaderboard.json", "utf-8"),
     );
 
     leaderboard.push({
